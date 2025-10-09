@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jkeresman01/jsql/internal/db"
+	"github.com/jkeresman01/jsql/internal/db/model"
 	"github.com/jkeresman01/jsql/internal/parser"
 )
 
@@ -31,7 +32,7 @@ func startREPL() {
 	reader := bufio.NewReader(os.Stdin)
 	var statement strings.Builder
 
-	database := db.NewDatabase()
+	database := model.NewDatabase()
 
 	for {
 		if statement.Len() == 0 {
@@ -76,9 +77,9 @@ func startREPL() {
 	}
 }
 
-func executeSQL(database *db.Database, query string) {
-	parser := parser.NewParser(query)
-	stmt, err := parser.Parse()
+func executeSQL(database *model.Database, query string) {
+	p := parser.NewParser(query)
+	stmt, err := p.Parse()
 	if err != nil {
 		fmt.Println("Parse error:", err)
 		return
@@ -86,9 +87,9 @@ func executeSQL(database *db.Database, query string) {
 
 	switch stmt.Type {
 	case "INSERT":
-		database.Insert(stmt.Table, stmt.Values)
+		db.Insert(database, stmt.Table, stmt.Values)
 	case "SELECT":
-		database.SelectAll(stmt.Table)
+		db.SelectAll(database, stmt.Table)
 	default:
 		fmt.Println("Unknown statement type.")
 	}
