@@ -43,4 +43,3 @@ func TestParseSelect(t *testing.T) {
 		t.Fatalf("expected Table=users, got %s", stmt.Table)
 	}
 }
-

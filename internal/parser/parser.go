@@ -5,7 +5,6 @@ import (
 	"github.com/jkeresman01/jsql/internal/lexer"
 )
 
-
 type Statement struct {
 	Type   string
 	Table  string
