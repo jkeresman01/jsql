@@ -83,4 +83,3 @@ func (l *Lexer) NextToken() Token {
 		return Token{Type: TOK_IDENT, Value: word}
 	}
 }
-

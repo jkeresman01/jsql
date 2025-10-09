@@ -11,14 +11,13 @@ const (
 	TOK_FROM   TokenType = "FROM"
 
 	// symbols
-	TOK_STAR    TokenType = "*"
-	TOK_LPAREN  TokenType = "("
-	TOK_RPAREN  TokenType = ")"
-	TOK_COMMA   TokenType = ","
-	TOK_SEMI    TokenType = ";"
-	TOK_STRING  TokenType = "STRING"
-	TOK_NUMBER  TokenType = "NUMBER"
-	TOK_IDENT   TokenType = "IDENT"
-	TOK_EOF     TokenType = "EOF"
+	TOK_STAR   TokenType = "*"
+	TOK_LPAREN TokenType = "("
+	TOK_RPAREN TokenType = ")"
+	TOK_COMMA  TokenType = ","
+	TOK_SEMI   TokenType = ";"
+	TOK_STRING TokenType = "STRING"
+	TOK_NUMBER TokenType = "NUMBER"
+	TOK_IDENT  TokenType = "IDENT"
+	TOK_EOF    TokenType = "EOF"
 )
-

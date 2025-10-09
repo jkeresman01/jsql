@@ -53,4 +53,3 @@ func (db *Database) SelectAll(table string) {
 	}
 	fmt.Printf("(%d rows)\n", len(t.Rows))
 }
-

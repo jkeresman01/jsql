@@ -28,7 +28,7 @@ func startREPL() {
 	fmt.Println("Type \\help for help, \\exit to quit.\n")
 
 	reader := bufio.NewReader(os.Stdin)
-	var statement strings.Builder 
+	var statement strings.Builder
 
 	database := db.NewDatabase()
 

@@ -93,4 +93,3 @@ func (p *Parser) parseSelect() (*Statement, error) {
 
 	return stmt, nil
 }
-
