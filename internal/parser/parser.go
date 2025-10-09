@@ -1,6 +1,10 @@
-package db
+package parser
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/jkeresman01/jsql/internal/lexer"
+)
+
 
 type Statement struct {
 	Type   string
@@ -9,12 +13,12 @@ type Statement struct {
 }
 
 type Parser struct {
-	l      *Lexer
-	curTok Token
+	l      *lexer.Lexer
+	curTok lexer.Token
 }
 
 func NewParser(input string) *Parser {
-	lex := NewLexer(input)
+	lex := lexer.NewLexer(input)
 	return &Parser{l: lex, curTok: lex.NextToken()}
 }
 
@@ -24,9 +28,9 @@ func (p *Parser) next() {
 
 func (p *Parser) Parse() (*Statement, error) {
 	switch p.curTok.Type {
-	case TOK_INSERT:
+	case lexer.INSERT:
 		return p.parseInsert()
-	case TOK_SELECT:
+	case lexer.SELECT:
 		return p.parseSelect()
 	default:
 		return nil, fmt.Errorf("unexpected token: %v", p.curTok)
@@ -37,36 +41,36 @@ func (p *Parser) parseInsert() (*Statement, error) {
 	stmt := &Statement{Type: "INSERT"}
 
 	p.next() // skip INSERT
-	if p.curTok.Type != TOK_INTO {
+	if p.curTok.Type != lexer.INTO {
 		return nil, fmt.Errorf("expected INTO, got %v", p.curTok.Type)
 	}
 	p.next()
 
-	if p.curTok.Type != TOK_IDENT {
+	if p.curTok.Type != lexer.IDENT {
 		return nil, fmt.Errorf("expected table name, got %v", p.curTok.Type)
 	}
 	stmt.Table = p.curTok.Value
 	p.next()
 
-	if p.curTok.Type != TOK_VALUES {
+	if p.curTok.Type != lexer.VALUES {
 		return nil, fmt.Errorf("expected VALUES, got %v", p.curTok.Type)
 	}
 	p.next()
 
-	if p.curTok.Type != TOK_LPAREN {
+	if p.curTok.Type != lexer.LPAREN {
 		return nil, fmt.Errorf("expected (, got %v", p.curTok.Type)
 	}
 	p.next()
 
 	// gather values until ')'
-	for p.curTok.Type != TOK_RPAREN && p.curTok.Type != TOK_EOF {
-		if p.curTok.Type == TOK_STRING || p.curTok.Type == TOK_NUMBER || p.curTok.Type == TOK_IDENT {
+	for p.curTok.Type != lexer.RPAREN && p.curTok.Type != lexer.EOF {
+		if p.curTok.Type == lexer.STRING || p.curTok.Type == lexer.NUMBER || p.curTok.Type == lexer.IDENT {
 			stmt.Values = append(stmt.Values, p.curTok.Value)
 		}
 		p.next()
 	}
 
-	if p.curTok.Type != TOK_RPAREN {
+	if p.curTok.Type != lexer.RPAREN {
 		return nil, fmt.Errorf("expected closing )")
 	}
 	return stmt, nil
@@ -76,17 +80,17 @@ func (p *Parser) parseSelect() (*Statement, error) {
 	stmt := &Statement{Type: "SELECT"}
 	p.next() // skip SELECT
 
-	if p.curTok.Type != TOK_STAR {
+	if p.curTok.Type != lexer.STAR {
 		return nil, fmt.Errorf("only SELECT * supported for now")
 	}
 	p.next()
 
-	if p.curTok.Type != TOK_FROM {
+	if p.curTok.Type != lexer.FROM {
 		return nil, fmt.Errorf("expected FROM, got %v", p.curTok.Type)
 	}
 	p.next()
 
-	if p.curTok.Type != TOK_IDENT {
+	if p.curTok.Type != lexer.IDENT {
 		return nil, fmt.Errorf("expected table name after FROM")
 	}
 	stmt.Table = p.curTok.Value

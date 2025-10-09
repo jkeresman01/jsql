@@ -1,14 +1,9 @@
-package db
+package lexer
 
 import (
 	"strings"
 	"unicode"
 )
-
-type Token struct {
-	Type  TokenType
-	Value string
-}
 
 type Lexer struct {
 	input []rune
@@ -26,7 +21,7 @@ func (l *Lexer) NextToken() Token {
 	}
 
 	if l.pos >= len(l.input) {
-		return Token{Type: TOK_EOF}
+		return Token{Type: EOF}
 	}
 
 	ch := l.input[l.pos]
@@ -34,15 +29,15 @@ func (l *Lexer) NextToken() Token {
 
 	switch ch {
 	case '(':
-		return Token{Type: TOK_LPAREN, Value: string(ch)}
+		return Token{Type: LPAREN, Value: string(ch)}
 	case ')':
-		return Token{Type: TOK_RPAREN, Value: string(ch)}
+		return Token{Type: RPAREN, Value: string(ch)}
 	case ',':
-		return Token{Type: TOK_COMMA, Value: string(ch)}
+		return Token{Type: COMMA, Value: string(ch)}
 	case ';':
-		return Token{Type: TOK_SEMI, Value: string(ch)}
+		return Token{Type: SEMI, Value: string(ch)}
 	case '*':
-		return Token{Type: TOK_STAR, Value: string(ch)}
+		return Token{Type: STAR, Value: string(ch)}
 	case '\'', '"':
 		start := ch
 		var val []rune
@@ -51,7 +46,7 @@ func (l *Lexer) NextToken() Token {
 			l.pos++
 		}
 		l.pos++ // skip closing quote
-		return Token{Type: TOK_STRING, Value: string(val)}
+		return Token{Type: STRING, Value: string(val)}
 	}
 
 	// identifiers / keywords / numbers
@@ -67,19 +62,19 @@ func (l *Lexer) NextToken() Token {
 
 	switch up {
 	case "INSERT":
-		return Token{Type: TOK_INSERT, Value: up}
+		return Token{Type: INSERT, Value: up}
 	case "INTO":
-		return Token{Type: TOK_INTO, Value: up}
+		return Token{Type: INTO, Value: up}
 	case "VALUES":
-		return Token{Type: TOK_VALUES, Value: up}
+		return Token{Type: VALUES, Value: up}
 	case "SELECT":
-		return Token{Type: TOK_SELECT, Value: up}
+		return Token{Type: SELECT, Value: up}
 	case "FROM":
-		return Token{Type: TOK_FROM, Value: up}
+		return Token{Type: FROM, Value: up}
 	default:
 		if unicode.IsDigit(rune(word[0])) {
-			return Token{Type: TOK_NUMBER, Value: word}
+			return Token{Type: NUMBER, Value: word}
 		}
-		return Token{Type: TOK_IDENT, Value: word}
+		return Token{Type: IDENT, Value: word}
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jkeresman01/jsql/internal/db"
+	"github.com/jkeresman01/jsql/internal/parser"
 )
 
 var replCmd = &cobra.Command{
@@ -76,7 +77,7 @@ func startREPL() {
 }
 
 func executeSQL(database *db.Database, query string) {
-	parser := db.NewParser(query)
+	parser := parser.NewParser(query)
 	stmt, err := parser.Parse()
 	if err != nil {
 		fmt.Println("Parse error:", err)
