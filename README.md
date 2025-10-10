@@ -1,5 +1,5 @@
 # jsql
-Mini psql like SQL shell built Go — for learning how real database shells work, one command at a time.|
+Mini SQL shell working on an in memory DB — for learning how real database shells work, one command at a time.
 
 ## Currently supported ##
 
