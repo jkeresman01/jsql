@@ -4,28 +4,30 @@ Mini SQL shell working on an in memory DB — for learning how real database she
 ## Currently supported ##
 
 ```shell
-Welcome to jsql v0.1
-Type \help for help, \exit to quit.
+jsql> CREATE DATABASE shop;
+Database 'shop' created.
 
-jsql> INSERT INTO users VALUES(1, 'Milica');
+jsql> \connect shop
+Connected to database 'shop'.
+
+jsql> INSERT INTO users VALUES (1, 'Milica');
 1 row inserted.
-jsql> INSERT INTO users (VALUES(2, 'Krpotich');
-Parse error: expected VALUES, got (
-jsql> INSERT INTO users VALUES(2, 'Krmpotich');
-1 row inserted.
+
+jsql \disconnect
+Disconnected from database 'shop'.
+
 jsql> SELECT * FROM users;
-+--------------------------+
-| USERS |
-+--------------------------+
-1 | Milica
-2 | Krmpotich
-(2 rows)
-jsql> \help
-Available commands:
-  SQL-like: INSERT INTO table VALUES (...);
-             SELECT * FROM table;
-  Meta: \help, \exit
-jsql> \exit
-Goodbye!
+Error: no database selected.
+
+jsql> \connect shop
+Connected to database 'shop'.
+
+jsql(shop)> SELECT * FROM users;
++-------+--------+
+| COL1  | COL2   |
++-------+--------+
+| 1     | Milica |
++-------+--------+
+(1 row)
 
 ```
