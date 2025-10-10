@@ -13,7 +13,7 @@ Connected to database 'shop'.
 jsql> INSERT INTO users VALUES (1, 'Milica');
 1 row inserted.
 
-jsql \disconnect
+jsql> \disconnect
 Disconnected from database 'shop'.
 
 jsql> SELECT * FROM users;
