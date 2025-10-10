@@ -55,7 +55,15 @@ func (m *DatabaseManager) Use(name string) {
 	fmt.Printf("Connected to database '%s'.\n", name)
 }
 
-// CurrentDB returns the active database.
 func (m *DatabaseManager) CurrentDB() *model.Database {
 	return m.Current
+}
+
+func (m *DatabaseManager) Disconnect() {
+	if m.Current == nil {
+		fmt.Println("No database currently connected.")
+		return
+	}
+	fmt.Printf("Disconnected from database '%s'.\n", m.Current.Name)
+	m.Current = nil
 }

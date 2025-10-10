@@ -53,6 +53,10 @@ func startREPL() {
 				fmt.Println("Goodbye!")
 				return
 
+			case line == "\\disconnect":
+				manager.Disconnect()
+				continue
+
 			case line == "\\help":
 				fmt.Println("Available commands:")
 				fmt.Println("  SQL-like: CREATE DATABASE name;")
