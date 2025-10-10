@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jkeresman01/jsql/internal/db"
-	"github.com/jkeresman01/jsql/internal/db/model"
 	"github.com/jkeresman01/jsql/internal/parser"
 )
 
@@ -32,7 +31,7 @@ func startREPL() {
 	reader := bufio.NewReader(os.Stdin)
 	var statement strings.Builder
 
-	database := model.NewDatabase()
+	manager := db.NewManager()
 
 	for {
 		if statement.Len() == 0 {
@@ -46,25 +45,38 @@ func startREPL() {
 			fmt.Println("Error reading input:", err)
 			return
 		}
-
 		line = strings.TrimSpace(line)
 
 		if statement.Len() == 0 {
-			switch line {
-			case "\\exit", "\\quit":
+			switch {
+			case line == "\\exit" || line == "\\quit":
 				fmt.Println("Goodbye!")
 				return
-			case "\\help":
+
+			case line == "\\help":
 				fmt.Println("Available commands:")
-				fmt.Println("  SQL-like: INSERT INTO table VALUES (...);")
+				fmt.Println("  SQL-like: CREATE DATABASE name;")
+				fmt.Println("             DROP DATABASE name;")
+				fmt.Println("             INSERT INTO table VALUES (...);")
 				fmt.Println("             SELECT * FROM table;")
-				fmt.Println("  Meta: \\help, \\exit")
+				fmt.Println("  Meta: \\help, \\exit, \\connect <db>")
 				continue
-			case "":
+
+			case strings.HasPrefix(line, "\\connect "):
+				parts := strings.SplitN(line, " ", 2)
+				if len(parts) == 2 {
+					manager.Use(parts[1])
+				} else {
+					fmt.Println("Usage: \\connect <database>")
+				}
+				continue
+
+			case line == "":
 				continue
 			}
 		}
 
+		// accumulate statement lines until ';'
 		statement.WriteString(" ")
 		statement.WriteString(line)
 
@@ -72,12 +84,12 @@ func startREPL() {
 			query := strings.TrimSpace(statement.String())
 			statement.Reset()
 
-			executeSQL(database, query)
+			executeSQL(manager, query)
 		}
 	}
 }
 
-func executeSQL(database *model.Database, query string) {
+func executeSQL(manager *db.DatabaseManager, query string) {
 	p := parser.NewParser(query)
 	stmt, err := p.Parse()
 	if err != nil {
@@ -86,10 +98,28 @@ func executeSQL(database *model.Database, query string) {
 	}
 
 	switch stmt.Type {
+	case "CREATE_DATABASE":
+		manager.CreateDatabase(stmt.Name)
+
+	case "DROP_DATABASE":
+		manager.DropDatabase(stmt.Name)
+
 	case "INSERT":
-		db.Insert(database, stmt.Table, stmt.Values)
+		current := manager.CurrentDB()
+		if current == nil {
+			fmt.Println("Error: no database selected.")
+			return
+		}
+		db.Insert(current, stmt.Table, stmt.Values)
+
 	case "SELECT":
-		db.SelectAll(database, stmt.Table)
+		current := manager.CurrentDB()
+		if current == nil {
+			fmt.Println("Error: no database selected.")
+			return
+		}
+		db.SelectAll(current, stmt.Table)
+
 	default:
 		fmt.Println("Unknown statement type.")
 	}

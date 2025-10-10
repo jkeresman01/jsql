@@ -1,13 +1,13 @@
 package model
 
-// Database represents the entire in-memory database instance.
 type Database struct {
+	Name   string
 	Tables map[string]*Table
 }
 
-// NewDatabase initializes a new empty database.
-func NewDatabase() *Database {
+func NewDatabase(name string) *Database {
 	return &Database{
+		Name:   name,
 		Tables: make(map[string]*Table),
 	}
 }

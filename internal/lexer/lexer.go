@@ -71,6 +71,13 @@ func (l *Lexer) NextToken() Token {
 		return Token{Type: SELECT, Value: up}
 	case "FROM":
 		return Token{Type: FROM, Value: up}
+	case "CREATE":
+		return Token{Type: CREATE, Value: up}
+	case "DROP":
+		return Token{Type: DROP, Value: up}
+	case "DATABASE":
+		return Token{Type: DATABASE, Value: up}
+
 	default:
 		if unicode.IsDigit(rune(word[0])) {
 			return Token{Type: NUMBER, Value: word}

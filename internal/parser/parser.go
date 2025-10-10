@@ -3,12 +3,14 @@ package parser
 import (
 	"fmt"
 	"github.com/jkeresman01/jsql/internal/lexer"
+	"strings"
 )
 
 type Statement struct {
 	Type   string
 	Table  string
 	Values []string
+	Name   string
 }
 
 type Parser struct {
@@ -31,6 +33,10 @@ func (p *Parser) Parse() (*Statement, error) {
 		return p.parseInsert()
 	case lexer.SELECT:
 		return p.parseSelect()
+	case lexer.CREATE:
+		return p.parseCreate()
+	case lexer.DROP:
+		return p.parseDrop()
 	default:
 		return nil, fmt.Errorf("unexpected token: %v", p.curTok)
 	}
@@ -95,4 +101,30 @@ func (p *Parser) parseSelect() (*Statement, error) {
 	stmt.Table = p.curTok.Value
 
 	return stmt, nil
+}
+
+func (p *Parser) parseCreate() (*Statement, error) {
+	p.next() // consume CREATE
+	if p.curTok.Type != lexer.DATABASE {
+		return nil, fmt.Errorf("expected DATABASE keyword")
+	}
+	p.next()
+	if p.curTok.Type != lexer.IDENT {
+		return nil, fmt.Errorf("expected database name")
+	}
+	name := strings.ToLower(p.curTok.Value)
+	return &Statement{Type: "CREATE_DATABASE", Name: name}, nil
+}
+
+func (p *Parser) parseDrop() (*Statement, error) {
+	p.next() // consume DROP
+	if p.curTok.Type != lexer.DATABASE {
+		return nil, fmt.Errorf("expected DATABASE keyword")
+	}
+	p.next()
+	if p.curTok.Type != lexer.IDENT {
+		return nil, fmt.Errorf("expected database name")
+	}
+	name := strings.ToLower(p.curTok.Value)
+	return &Statement{Type: "DROP_DATABASE", Name: name}, nil
 }

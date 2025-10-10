@@ -9,11 +9,14 @@ type Token struct {
 
 const (
 	// Keywords
-	INSERT TokenType = "INSERT"
-	INTO   TokenType = "INTO"
-	VALUES TokenType = "VALUES"
-	SELECT TokenType = "SELECT"
-	FROM   TokenType = "FROM"
+	CREATE   TokenType = "CREATE"
+	DROP     TokenType = "DROP"
+	DATABASE TokenType = "DATABASE"
+	INSERT   TokenType = "INSERT"
+	INTO     TokenType = "INTO"
+	VALUES   TokenType = "VALUES"
+	SELECT   TokenType = "SELECT"
+	FROM     TokenType = "FROM"
 
 	// Symbols
 	STAR   TokenType = "*"
