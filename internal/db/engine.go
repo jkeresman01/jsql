@@ -29,11 +29,38 @@ func SelectAll(db *model.Database, table string) {
 		return
 	}
 
-	fmt.Println("+--------------------------+")
-	fmt.Printf("| %s |\n", strings.ToUpper(table))
-	fmt.Println("+--------------------------+")
+	numCols := len(t.Rows[0].Values)
+
+	// Compute column widths
+	colWidths := make([]int, numCols)
 	for _, row := range t.Rows {
-		fmt.Println(strings.Join(row.Values, " | "))
+		for i, val := range row.Values {
+			if len(val) > colWidths[i] {
+				colWidths[i] = len(val)
+			}
+		}
 	}
+
+	// Build a horizontal line
+	line := "+"
+	for _, w := range colWidths {
+		line += strings.Repeat("-", w+2) + "+"
+	}
+
+	// Print header
+	fmt.Println(line)
+	fmt.Printf("| %s |\n", strings.ToUpper(table))
+	fmt.Println(line)
+
+	// Print rows
+	for _, row := range t.Rows {
+		fmt.Print("|")
+		for i, val := range row.Values {
+			fmt.Printf(" %-*s |", colWidths[i], val)
+		}
+		fmt.Println()
+	}
+	fmt.Println(line)
+
 	fmt.Printf("(%d rows)\n", len(t.Rows))
 }
